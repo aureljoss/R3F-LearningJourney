@@ -1,4 +1,5 @@
 import Clicker from "./Clicker.js";
+import People from "./People.js";
 import { useState,useMemo } from "react";
 
 
@@ -35,5 +36,6 @@ export default function App ({children, clickersCount})
     <Clicker keyName='countB' color={`hsl(${Math.random()*360}deg, 100%, 70%)`} increment={increment}/>
     <Clicker keyName='countC' color={`hsl(${Math.random()*360}deg, 100%, 70%)`} increment={increment}/> */}
     </>}
+    <People/>
     </>
 } 
