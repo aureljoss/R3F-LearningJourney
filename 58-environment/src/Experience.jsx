@@ -1,6 +1,6 @@
-import { useFrame } from '@react-three/fiber'
-import { OrbitControls, useHelper, BakeShadows, SoftShadows, Sky, useFaceControls} from '@react-three/drei'
-import { useRef } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
+import { OrbitControls, useHelper, BakeShadows, SoftShadows, Sky, useFaceControls, Environment} from '@react-three/drei'
+import { useRef, useEffect } from 'react'
 import { Perf } from 'r3f-perf'
 import * as THREE from 'three'
 import {useControls} from 'leva'
@@ -21,9 +21,34 @@ export default function Experience()
         sunPosition:{value:[1,2,3]}
     })
 
+    const { envMapIntensity, envMapHeight, envMapRadius, envMapScale } = useControls('environment map', {
+        envMapIntensity: { value: 7, min: 0, max: 12 },
+        envMapHeight: { value: 7, min: 0, max: 100 },
+        envMapRadius: { value: 28, min: 10, max: 1000 },
+        envMapScale: { value: 100, min: 10, max: 1000 }
+    })
+
+    const scene = useThree(state=>state.scene)
+    useEffect(()=>{
+        scene.environmentIntensity=envMapIntensity
+    },[envMapIntensity])
+
     return <>
+
+        <Environment 
+        // background 
+        // files={'./environmentMaps/the_sky_is_on_fire_2k.hdr'}
+        preset="sunset"
+        resolution={32}
+        ground={{
+            height:envMapHeight, 
+            radius:envMapRadius,
+            scale:envMapScale
+        }}
+        />
+
         {/* <BakeShadows/> */}
-        <SoftShadows size={ 25 } samples={ 10 } focus={ 0 } />
+        <SoftShadows size={ 25 } samples={ 10 } focus={ 0 } position={0,0,0}/>
         <color args={['ivory']} attach="background"/>
 
 
@@ -31,26 +56,26 @@ export default function Experience()
 
         <OrbitControls makeDefault />
 
-        <directionalLight position={ sunPosition } intensity={ 4.5 } ref={directionalLight} castShadow shadow-mapSize={[1024, 1024]} shadow-camera-top={5} shadow-camera-bottom={-5} shadow-camera-right={5} shadow-camera-left={-5}
+        {/* <directionalLight position={ sunPosition } intensity={ 4.5 } ref={directionalLight} castShadow shadow-mapSize={[1024, 1024]} shadow-camera-top={5} shadow-camera-bottom={-5} shadow-camera-right={5} shadow-camera-left={-5}
             shadow-camera-near={1} shadow-camera-far={10}/>
         <ambientLight intensity={ 1.5 } />
 
-        <Sky sunPosition={sunPosition}/>
+        <Sky sunPosition={sunPosition}/> */}
 
-        <mesh position-x={ - 2 } castShadow>
+        <mesh position-x={ - 2 } castShadow position-y={1}>
             <sphereGeometry />
-            <meshStandardMaterial color="orange" />
+            <meshStandardMaterial color="orange" envMapIntensity={envMapIntensity}/>
         </mesh>
 
-        <mesh ref={ cube } position-x={ 2 } scale={ 1.5 } castShadow>
+        <mesh ref={ cube } position-x={ 2 } scale={ 1.5 } castShadow position-y={1}>
             <boxGeometry />
-            <meshStandardMaterial color="mediumpurple" />
+            <meshStandardMaterial color="mediumpurple" envMapIntensity={envMapIntensity}/>
         </mesh>
 
-        <mesh position-y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 } receiveShadow>
+        {/* <mesh position-y={ 0 } rotation-x={ - Math.PI * 0.5 } scale={ 10 } receiveShadow>
             <planeGeometry />
-            <meshStandardMaterial color="greenyellow" />
-        </mesh>
+            <meshStandardMaterial color="greenyellow" envMapIntensity={envMapIntensity}/>
+        </mesh> */}
 
     </>
 }
