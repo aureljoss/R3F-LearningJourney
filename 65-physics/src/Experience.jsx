@@ -75,7 +75,7 @@ export default function Experience() {
       <ambientLight intensity={1.5} />
 
       <Physics 
-        debug={false} 
+        // debug={false} 
         gravity={[0, -9.08, 0]}>
         <RigidBody colliders="ball">
           <mesh castShadow position={[-1.5, 2, 0]}>
